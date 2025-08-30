@@ -18,8 +18,8 @@ import {
 } from "../components/ui/dialog";
 
 import {
-  Search, Bell, Settings, Filter, ExternalLink, Clock, Bookmark,
-  TrendingUp, Star, User, LogOut, MapPin, Key
+  Search, Filter, ExternalLink, Clock, Bookmark,
+  TrendingUp, Star, LogOut, MapPin, Key
 } from "lucide-react";
 
 type Opportunity = {
@@ -219,14 +219,9 @@ const Dashboard = ({ session }: DashboardProps) => {
           </div>
 
           <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" title="Notificações"><Bell className="w-5 h-5" /></Button>
-            <Button variant="ghost" size="icon" title="Configurações"><Settings className="w-5 h-5" /></Button>
             <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4 mr-2" />Sair
             </Button>
-            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center" title={session.user.email}>
-              <User className="w-4 h-4 text-primary" />
-            </div>
           </div>
         </div>
       </header>
