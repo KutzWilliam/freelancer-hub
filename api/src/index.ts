@@ -27,7 +27,7 @@ app.post('/api/notify', async (req, res) => {
   try {
     const { data: opportunities, error: oppsError } = await supabase
       .from('opportunities')
-      .select('id, title, description')
+      .select('id, title, description, source_url')
       .in('id', newOpportunityIds);
 
     if (oppsError) throw oppsError;

@@ -6,14 +6,23 @@ type Opportunity = {
   id: string;
   title: string;
   description: string | null;
+  source_url: string;
 };
 
 export const sendNewOpportunitiesEmail = async (userEmail: string, opportunities: Opportunity[]) => {
   const opportunitiesHtml = opportunities
     .map(opp => `
       <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
-        <h3 style="margin: 0 0 5px 0;">${opp.title}</h3>
-        <p style="margin: 0; color: #555;">${opp.description?.substring(0, 150) || ''}...</p>
+      <h3 style="margin: 0 0 8px 0; font-size: 18px;">
+          <a 
+            href="${opp.source_url}" 
+            target="_blank" 
+            style="color: #1a73e8; text-decoration: none; font-weight: bold;"
+          >
+            ${opp.title}
+          </a>
+        </h3>
+        <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.5;">${opp.description?.substring(0, 200) || ''}...</p>
       </div>
     `)
     .join('');
