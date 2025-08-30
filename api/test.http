@@ -2,5 +2,5 @@ POST https://freelancer-hub-r0p4.onrender.com/api/notify
 Content-Type: application/json
 
 {
-  "newOpportunityIds": ["068bee78-d349-4ca1-a373-7153de3f65c0"]
+  "newOpportunityIds": ["012ef7c3-02af-48e5-b6cd-66915b1cab8c"]
 }
