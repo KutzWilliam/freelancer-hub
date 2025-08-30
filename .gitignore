@@ -1,0 +1,16 @@
+# Dependências
+node_modules
+/api/node_modules
+/frontend/node_modules
+
+# Arquivos de Build
+/api/dist
+/frontend/dist
+
+# Arquivos de Ambiente
+.env
+*/.env
+
+# Logs e arquivos de sistema
+npm-debug.log
+.DS_Store

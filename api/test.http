@@ -1,0 +1,6 @@
+POST http://localhost:3001/api/notify
+Content-Type: application/json
+
+{
+  "newOpportunityIds": ["068bee78-d349-4ca1-a373-7153de3f65c0"]
+}

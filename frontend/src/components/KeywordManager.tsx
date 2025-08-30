@@ -1,113 +1,55 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
-import type { Session } from '@supabase/supabase-js';
+import { useState } from 'react';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { Badge } from './ui/badge';
+import { Trash2, PlusCircle } from 'lucide-react';
 
-type Keyword = {
-  id: number;
-  term: string;
-  user_id: string;
-};
-
+// Novas props: a lista de keywords e as funções para alterá-la
 type KeywordManagerProps = {
-  session: Session;
+  keywords: string[];
+  onAddKeyword: (term: string) => Promise<void>;
+  onDeleteKeyword: (term: string) => Promise<void>;
 };
 
-const KeywordManager = ({ session }: KeywordManagerProps) => {
-  const [keywords, setKeywords] = useState<Keyword[]>([]);
+export const KeywordManager = ({ keywords, onAddKeyword, onDeleteKeyword }: KeywordManagerProps) => {
   const [newKeyword, setNewKeyword] = useState('');
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchKeywords = async () => {
-      setLoading(true);
-      const { data, error } = await supabase.from('keywords').select('*');
-
-      if (error) {
-        console.error('Erro ao buscar palavras-chave:', error);
-      } else if (data) {
-        setKeywords(data);
-      }
-      setLoading(false);
-    };
-
-    fetchKeywords();
-  }, []);
-
-  const handleAddKeyword = async (e: React.FormEvent) => {
-    e.preventDefault(); 
-    if (newKeyword.trim() === '') return;
-
-    const { data, error } = await supabase
-      .from('keywords')
-      .insert({ term: newKeyword.trim(), user_id: session.user.id })
-      .select() 
-      .single(); 
-
-    if (error) {
-      alert('Erro ao adicionar palavra-chave: ' + error.message);
-    } else if (data) {
-      setKeywords([...keywords, data]);
-      setNewKeyword('');
-    }
-  };
-
-  const handleDeleteKeyword = async (keywordId: number) => {
-    const { error } = await supabase.from('keywords').delete().eq('id', keywordId);
-
-    if (error) {
-      alert('Erro ao deletar palavra-chave: ' + error.message);
-    } else {
-      setKeywords(keywords.filter((kw) => kw.id !== keywordId));
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onAddKeyword(newKeyword);
+    setNewKeyword(''); // Limpa o input após adicionar
   };
 
   return (
-    <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 mb-8">
-      <h2 className="text-2xl font-bold text-white mb-4">Gerenciar Palavras-Chave</h2>
-
-      <form onSubmit={handleAddKeyword} className="flex gap-4 mb-6">
-        <input
-          type="text"
+    <div>
+      <p className="text-sm text-muted-foreground mb-4">
+        Adicione ou remova termos para refinar sua busca em tempo real.
+      </p>
+      <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
+        <Input
           value={newKeyword}
           onChange={(e) => setNewKeyword(e.target.value)}
-          placeholder="Ex: react, python, sênior..."
-          className="flex-grow bg-gray-700 text-white rounded-md px-4 py-2 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          placeholder="Ex: typescript, sênior..."
         />
-        <button
-          type="submit"
-          className="bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300"
-        >
-          Adicionar
-        </button>
+        <Button type="submit" size="icon" title="Adicionar Palavra-chave">
+          <PlusCircle className="w-4 h-4" />
+        </Button>
       </form>
 
-      {loading ? (
-        <p className="text-gray-400">Carregando...</p>
-      ) : (
-        <div className="flex flex-wrap gap-3">
-          {keywords.length > 0 ? (
-            keywords.map((kw) => (
-              <div
-                key={kw.id}
-                className="flex items-center bg-gray-700 rounded-full px-4 py-1"
-              >
-                <span className="text-white mr-3">{kw.term}</span>
-                <button
-                  onClick={() => handleDeleteKeyword(kw.id)}
-                  className="text-red-400 hover:text-red-200 font-bold"
-                  title="Remover"
-                >
-                  &times;
-                </button>
-              </div>
-            ))
-          ) : (
-            <p className="text-gray-500">Nenhuma palavra-chave adicionada ainda.</p>
-          )}
-        </div>
-      )}
+      <div className="flex flex-wrap gap-2">
+        {keywords.length > 0 ? (
+          keywords.map((kw) => (
+            <Badge key={kw} variant="secondary" className="flex items-center gap-2">
+              {kw}
+              <button onClick={() => onDeleteKeyword(kw)} className="hover:text-destructive" title={`Remover "${kw}"`}>
+                <Trash2 className="w-3 h-3" />
+              </button>
+            </Badge>
+          ))
+        ) : (
+          <p className="text-sm text-muted-foreground">Nenhuma palavra-chave adicionada.</p>
+        )}
+      </div>
     </div>
   );
 };
-
-export default KeywordManager;
