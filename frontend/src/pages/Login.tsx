@@ -1,14 +1,11 @@
 import { Auth } from '@supabase/auth-ui-react'
-import type { Theme } from '@supabase/auth-ui-shared' // <-- CORREÇÃO AQUI
+import type { Theme } from '@supabase/auth-ui-shared'
 import { supabase } from '../supabaseClient'
 import { Card, CardContent } from '../components/ui/card'
 import { Search } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-// Componente da página de Login estilizada
 const Login = () => {
-  // Objeto de tema customizado para o componente Auth do Supabase
-  // Utiliza as mesmas variáveis de cor da landing page para consistência visual
   const customTheme: Theme = {
     default: {
       colors: {
@@ -71,7 +68,6 @@ const Login = () => {
     <div className="flex flex-col justify-center items-center min-h-screen bg-background p-4">
       <Card className="w-full max-w-md mx-auto">
         <CardContent className="p-8">
-          {/* Cabeçalho do formulário */}
           <div className="flex flex-col items-center text-center mb-8">
             <Link to="/" className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
@@ -84,7 +80,6 @@ const Login = () => {
             </p>
           </div>
 
-          {/* Componente de Autenticação do Supabase */}
           <Auth
             supabaseClient={supabase}
             appearance={{ theme: customTheme }}

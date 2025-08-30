@@ -4,7 +4,6 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Trash2, PlusCircle } from 'lucide-react';
 
-// Novas props: a lista de keywords e as funções para alterá-la
 type KeywordManagerProps = {
   keywords: string[];
   onAddKeyword: (term: string) => Promise<void>;
@@ -17,7 +16,7 @@ export const KeywordManager = ({ keywords, onAddKeyword, onDeleteKeyword }: Keyw
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onAddKeyword(newKeyword);
-    setNewKeyword(''); // Limpa o input após adicionar
+    setNewKeyword('');
   };
 
   return (

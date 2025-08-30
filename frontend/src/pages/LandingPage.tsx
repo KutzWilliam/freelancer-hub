@@ -13,7 +13,6 @@ export default function LandingPage() {
 
     return (
         <div className="min-h-screen bg-background">
-            {/* Header */}
             <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
@@ -48,7 +47,6 @@ export default function LandingPage() {
                 </div>
             </header>
 
-            {/* Hero Section */}
             <section className="relative py-20 lg:py-32 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-muted/50 to-background"></div>
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -92,7 +90,6 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Features Section */}
             <section id="recursos" className="py-20 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
@@ -147,7 +144,6 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* How It Works Section */}
             <section id="como-funciona" className="py-20">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
@@ -190,8 +186,6 @@ export default function LandingPage() {
                     </div>
                 </div>
             </section>
-
-            {/* Testimonials Section */}
             <section className="py-20 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
@@ -273,7 +267,6 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* CTA Section */}
             <section className="py-20 bg-primary">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <h2 className="font-bold text-3xl md:text-4xl text-primary-foreground mb-4">
@@ -289,7 +282,6 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Footer */}
             <footer id="contato" className="bg-foreground text-background py-12">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid md:grid-cols-4 gap-8">

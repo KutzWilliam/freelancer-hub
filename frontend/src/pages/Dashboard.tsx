@@ -3,7 +3,6 @@ import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import type { Session } from '@supabase/supabase-js';
 
-// Componentes
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
@@ -18,13 +17,11 @@ import {
   DialogFooter,
 } from "../components/ui/dialog";
 
-// Ícones
 import {
   Search, Bell, Settings, Filter, ExternalLink, Clock, Bookmark,
   TrendingUp, Star, User, LogOut, MapPin, Key
 } from "lucide-react";
 
-// --- Tipagens ---
 type Opportunity = {
   id: string;
   title: string;
@@ -40,7 +37,6 @@ type DashboardProps = {
 
 type ViewMode = 'all' | 'saved';
 
-// --- Função Utilitária para Tempo Relativo ---
 const formatRelativeTime = (dateString: string) => {
   const date = new Date(dateString);
   const now = new Date();
@@ -56,7 +52,6 @@ const formatRelativeTime = (dateString: string) => {
   return `há ${days} dias`;
 };
 
-// --- Componente do Modal de Detalhes ---
 const OpportunityDetailModal = ({ opportunity, onClose }: { opportunity: Opportunity | null, onClose: () => void }) => {
   if (!opportunity) return null;
 
@@ -87,11 +82,9 @@ const OpportunityDetailModal = ({ opportunity, onClose }: { opportunity: Opportu
 };
 
 
-// --- Componente Principal do Dashboard ---
 const Dashboard = ({ session }: DashboardProps) => {
   const navigate = useNavigate();
 
-  // --- Estados do Componente ---
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [savedOpportunityIds, setSavedOpportunityIds] = useState<Set<string>>(new Set());
   const [keywords, setKeywords] = useState<string[]>([]);
@@ -100,7 +93,6 @@ const Dashboard = ({ session }: DashboardProps) => {
   const [viewMode, setViewMode] = useState<ViewMode>('all');
   const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null);
 
-  // --- Busca de Dados e Inscrição em Tempo Real ---
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -113,7 +105,7 @@ const Dashboard = ({ session }: DashboardProps) => {
       if (keywordsRes.data) setKeywords(keywordsRes.data.map(kw => kw.term));
       if (savedRes.data) setSavedOpportunityIds(new Set(savedRes.data.map(item => item.opportunity_id)));
       if (opportunitiesRes.data) setOpportunities(opportunitiesRes.data);
-      
+
       setLoading(false);
     };
 
@@ -134,7 +126,6 @@ const Dashboard = ({ session }: DashboardProps) => {
     };
   }, [session.user.id]);
 
-  // --- Funções de Ação ---
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/');
@@ -178,18 +169,18 @@ const Dashboard = ({ session }: DashboardProps) => {
       .eq('term', termToDelete);
 
     if (error) {
+      console.error('Erro ao deletar palavra-chave:', error);
       alert('Erro ao deletar palavra-chave: ' + error.message);
     } else {
-      setKeywords(keywords.filter((kw) => kw !== termToDelete));
+      setKeywords(currentKeywords => currentKeywords.filter((kw) => kw !== termToDelete));
     }
   };
 
-  // --- Dados Derivados (Filtragem e Cálculos) com useMemo para Performance ---
   const filteredByKeywords = useMemo(() => {
     if (keywords.length === 0) return opportunities;
-    return opportunities.filter(opp => 
-      keywords.some(kw => 
-        opp.title.toLowerCase().includes(kw.toLowerCase()) || 
+    return opportunities.filter(opp =>
+      keywords.some(kw =>
+        opp.title.toLowerCase().includes(kw.toLowerCase()) ||
         opp.description?.toLowerCase().includes(kw.toLowerCase())
       )
     );
@@ -204,7 +195,7 @@ const Dashboard = ({ session }: DashboardProps) => {
 
   const finalOpportunities = useMemo(() => {
     if (!searchTerm) return filteredByViewMode;
-    return filteredByViewMode.filter(opp => 
+    return filteredByViewMode.filter(opp =>
       opp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       opp.description?.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -220,23 +211,23 @@ const Dashboard = ({ session }: DashboardProps) => {
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Search className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="font-bold text-xl">FreelancerHub</span>
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <Search className="w-5 h-5 text-primary-foreground" />
             </div>
+            <span className="font-bold text-xl">FreelancerHub</span>
+          </div>
 
-            <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon" title="Notificações"><Bell className="w-5 h-5" /></Button>
-              <Button variant="ghost" size="icon" title="Configurações"><Settings className="w-5 h-5" /></Button>
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
-                <LogOut className="w-4 h-4 mr-2" />Sair
-              </Button>
-              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center" title={session.user.email}>
-                <User className="w-4 h-4 text-primary" />
-              </div>
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="icon" title="Notificações"><Bell className="w-5 h-5" /></Button>
+            <Button variant="ghost" size="icon" title="Configurações"><Settings className="w-5 h-5" /></Button>
+            <Button variant="ghost" size="sm" onClick={handleLogout}>
+              <LogOut className="w-4 h-4 mr-2" />Sair
+            </Button>
+            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center" title={session.user.email}>
+              <User className="w-4 h-4 text-primary" />
             </div>
+          </div>
         </div>
       </header>
 
@@ -247,52 +238,52 @@ const Dashboard = ({ session }: DashboardProps) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="hover:bg-accent/50 transition-colors">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Novas Hoje</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{opportunitiesToday}</div>
-                <p className="text-xs text-muted-foreground">Vagas das últimas 24h</p>
-              </CardContent>
-            </Card>
-            <Card 
-              className={`cursor-pointer hover:bg-accent/50 transition-all ${viewMode === 'saved' ? 'border-primary shadow-lg' : 'border-transparent'}`}
-              onClick={() => setViewMode('saved')}
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Vagas Salvas</CardTitle>
-                <Bookmark className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{savedOpportunityIds.size}</div>
-                <p className="text-xs text-muted-foreground">Clique para ver seus favoritos</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Palavras-chave</CardTitle>
-                <Key className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{keywords.length}</div>
-                <p className="text-xs text-muted-foreground">Termos monitorados</p>
-              </CardContent>
-            </Card>
-            <Card 
-              className={`cursor-pointer hover:bg-accent/50 transition-all ${viewMode === 'all' ? 'border-primary shadow-lg' : 'border-transparent'}`}
-              onClick={() => setViewMode('all')}
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Feed Principal</CardTitle>
-                <Filter className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{filteredByKeywords.length}</div>
-                <p className="text-xs text-muted-foreground">Total de vagas no seu perfil</p>
-              </CardContent>
-            </Card>
+          <Card className="hover:bg-accent/50 transition-colors">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Novas Hoje</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{opportunitiesToday}</div>
+              <p className="text-xs text-muted-foreground">Vagas das últimas 24h</p>
+            </CardContent>
+          </Card>
+          <Card
+            className={`cursor-pointer hover:bg-accent/50 transition-all ${viewMode === 'saved' ? 'border-primary shadow-lg' : 'border-transparent'}`}
+            onClick={() => setViewMode('saved')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Vagas Salvas</CardTitle>
+              <Bookmark className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{savedOpportunityIds.size}</div>
+              <p className="text-xs text-muted-foreground">Clique para ver seus favoritos</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Palavras-chave</CardTitle>
+              <Key className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{keywords.length}</div>
+              <p className="text-xs text-muted-foreground">Termos monitorados</p>
+            </CardContent>
+          </Card>
+          <Card
+            className={`cursor-pointer hover:bg-accent/50 transition-all ${viewMode === 'all' ? 'border-primary shadow-lg' : 'border-transparent'}`}
+            onClick={() => setViewMode('all')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Feed Principal</CardTitle>
+              <Filter className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{filteredByKeywords.length}</div>
+              <p className="text-xs text-muted-foreground">Total de vagas no seu perfil</p>
+            </CardContent>
+          </Card>
         </div>
 
         {viewMode === 'saved' && (
@@ -306,8 +297,8 @@ const Dashboard = ({ session }: DashboardProps) => {
           <div className="lg:col-span-2">
             <div className="relative flex-1 mb-6">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input 
-                placeholder="Buscar nas vagas filtradas..." 
+              <Input
+                placeholder="Buscar nas vagas filtradas..."
                 className="pl-10"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -319,13 +310,13 @@ const Dashboard = ({ session }: DashboardProps) => {
                 <div className="text-center text-muted-foreground py-10">Carregando seu feed...</div>
               ) : finalOpportunities.length === 0 ? (
                 <div className="text-center text-muted-foreground py-10 bg-muted rounded-md">
-                   <h3 className="font-semibold">Nenhuma oportunidade encontrada.</h3>
-                   <p className="text-sm mt-1">Tente ajustar seus filtros ou palavras-chave.</p>
+                  <h3 className="font-semibold">Nenhuma oportunidade encontrada.</h3>
+                  <p className="text-sm mt-1">Tente ajustar seus filtros ou palavras-chave.</p>
                 </div>
               ) : (
                 finalOpportunities.map((opp) => (
-                  <Card 
-                    key={opp.id} 
+                  <Card
+                    key={opp.id}
                     className="hover:shadow-lg transition-shadow duration-300 cursor-pointer"
                     onClick={() => setSelectedOpportunity(opp)}
                   >
@@ -342,14 +333,14 @@ const Dashboard = ({ session }: DashboardProps) => {
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-2">
-                           <Button variant="outline" size="icon" title="Ver vaga original" onClick={(e) => e.stopPropagation()}>
-                              <a href={opp.source_url} target="_blank" rel="noopener noreferrer">
-                                <ExternalLink className="w-4 h-4" />
-                              </a>
-                           </Button>
-                           <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); toggleFavorite(opp.id); }} title={savedOpportunityIds.has(opp.id) ? 'Desfavoritar' : 'Favoritar'}>
-                              <Star className={`w-5 h-5 transition-all ${savedOpportunityIds.has(opp.id) ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground hover:text-yellow-400'}`} />
-                           </Button>
+                          <Button variant="outline" size="icon" title="Ver vaga original" onClick={(e) => e.stopPropagation()}>
+                            <a href={opp.source_url} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="w-4 h-4" />
+                            </a>
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); toggleFavorite(opp.id); }} title={savedOpportunityIds.has(opp.id) ? 'Desfavoritar' : 'Favoritar'}>
+                            <Star className={`w-5 h-5 transition-all ${savedOpportunityIds.has(opp.id) ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground hover:text-yellow-400'}`} />
+                          </Button>
                         </div>
                       </div>
                     </CardContent>
@@ -360,23 +351,23 @@ const Dashboard = ({ session }: DashboardProps) => {
           </div>
 
           <div className="space-y-6">
-             <Card>
-               <CardHeader><CardTitle>Gerenciar Palavras-chave</CardTitle></CardHeader>
-               <CardContent>
-                 <KeywordManager
-                    keywords={keywords}
-                    onAddKeyword={handleAddKeyword}
-                    onDeleteKeyword={handleDeleteKeyword}
-                 />
-               </CardContent>
-             </Card>
+            <Card>
+              <CardHeader><CardTitle>Gerenciar Palavras-chave</CardTitle></CardHeader>
+              <CardContent>
+                <KeywordManager
+                  keywords={keywords}
+                  onAddKeyword={handleAddKeyword}
+                  onDeleteKeyword={handleDeleteKeyword}
+                />
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>
 
-      <OpportunityDetailModal 
-        opportunity={selectedOpportunity} 
-        onClose={() => setSelectedOpportunity(null)} 
+      <OpportunityDetailModal
+        opportunity={selectedOpportunity}
+        onClose={() => setSelectedOpportunity(null)}
       />
     </div>
   );
