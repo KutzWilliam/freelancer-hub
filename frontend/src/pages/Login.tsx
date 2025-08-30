@@ -84,6 +84,7 @@ const Login = () => {
             supabaseClient={supabase}
             appearance={{ theme: customTheme }}
             providers={['github']}
+            redirectTo={window.location.origin}
             localization={{
               variables: {
                 sign_in: {
